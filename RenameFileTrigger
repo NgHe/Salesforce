@@ -1,0 +1,23 @@
+trigger renameOrderAttach on ContentDocumentLink (after insert) {
+  
+    List<ContentDocument> toBeUpdatedDocs = new List<ContentDocument>();
+
+    Set<Id> newDocIDs = new Set<Id> ();
+    for( ContentDocumentLink doc : trigger.new  ){
+        newDocIDs.add( doc.Id );
+    }
+    
+    for(ContentDocumentLink objDoc : [SELECT ContentDocumentId,ContentDocument.Title,LinkedEntity.Name from ContentDocumentLink 
+WHERE Id in :newDocIDs ]){
+            if(objDoc.LinkedEntity.Name.startsWith('RC-')){    //判断附件的母体是订单的时候，才执行修改名字
+                 ContentDocument afterRenameDoc= new ContentDocument();
+                 afterRenameDoc.id= objDoc.ContentDocumentId;
+                 afterRenameDoc.Title=objDoc.LinkedEntity.Name+'__'+objDoc.ContentDocument.Title;
+                 toBeUpdatedDocs.add(afterRenameDoc);
+                 update toBeUpdatedDocs;
+           }          
+    }
+
+    //update toBeUpdatedDocs;
+    system.debug('success');
+}
