@@ -1,0 +1,29 @@
+trigger BGQuoteTrigger on BGQuote__c(after insert,before update,after update,before insert) 
+{
+    new Triggers()
+    .bind(Triggers.Evt.beforeinsert, new CloneBGQHandler())
+    .bind(Triggers.Evt.afterinsert, new CloneEQHandler())
+    .bind(Triggers.Evt.afterUpdate,new GenerateRecordProductHandler())
+    //记录类型为常规的BG报价审批通过时生成计划
+    .bind(Triggers.Evt.afterUpdate,new CreateBGPlanHandler())
+    //赢单金额汇总  审批通过且启用的常规采购报价，按照大行业汇总到瑞斯康达销售/报价所有人的本年度的销售任务。
+  //赢单金额汇总  审批通过且启用的项目报价，按照大行业汇总到瑞斯康达销售/报价所有人的本年度的销售任务。
+    //.bind(Triggers.Evt.afterUpdate,new CountBGtotleHandler())
+    .bind(Triggers.Evt.afterUpdate,new CountBGtotleHandler())
+    .bind(Triggers.Evt.beforeUpdate,new LimitQuoteHandler())
+    //将报价共享给所填写的瑞斯康达销售 by NICK
+    .bind(Triggers.Evt.afterInsert,new BGQuoteSharingToSalesHan())
+    .bind(Triggers.Evt.afterUpdate,new BGQuoteSharingToSalesHan())
+    //将报价上的项目折让勾选与不勾选 修改审批层级。
+    .bind(Triggers.Evt.afterUpdate, new UpdateBGQuteApprovalHan())
+    //项目报价共享 by EZ
+    .bind(Triggers.Evt.afterInsert,new ShareBGQToPartnerHandler())
+    //分销商创建业务机会给分销商名称赋值
+    .bind(Triggers.Evt.beforeInsert,new InputFXSBGQHandler())
+    .bind(Triggers.Evt.beforeUpdate,new InputFXSBGQHandler())
+    //报价名称查重
+    .bind(Triggers.Evt.beforeInsert,new LimitBGQNameHandler())
+    //给项目报价大行业，子行业，项目折让赋值
+    .bind(Triggers.Evt.beforeInsert,new InputBigDisHandler())
+    .execute(); 
+}
