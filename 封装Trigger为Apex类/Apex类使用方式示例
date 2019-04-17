@@ -1,0 +1,14 @@
+public class BGQuotationApproval implements Triggers.Handler {
+    public void handle() {
+        if(Trigger.isInsert){
+            List<BGQuoteProduct__c>  bglist = (List<BGQuoteProduct__c>)Trigger.new;
+            Set<ID> idSet = new Set<ID>();
+            for(BGQuoteProduct__c bg : bglist){
+                idSet.add(bg.BGQuoteProjectName__c);
+            }
+            ......
+            ......
+            ......
+            ......
+      }
+}
