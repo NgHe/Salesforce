@@ -1,4 +1,4 @@
-public class BGQuotationApproval implements Triggers.Handler {
+public class BGQuotationApproval implements Triggers.Handler {    //Trigger Handler
     public void handle() {
         if(Trigger.isInsert){
             List<BGQuoteProduct__c>  bglist = (List<BGQuoteProduct__c>)Trigger.new;
